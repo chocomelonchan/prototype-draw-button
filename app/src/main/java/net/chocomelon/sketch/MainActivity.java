@@ -102,6 +102,11 @@ public class MainActivity extends Activity {
         mDrawView.reset();
     }
 
+    @OnClick(R.id.button_back)
+    public void onBackButtonClick() {
+        mDrawView.back();
+    }
+
     @OnClick(R.id.button_position)
     public void onPositionButtonClick() {
         int height = getResources().getDimensionPixelSize(R.dimen.buttons_container_height);

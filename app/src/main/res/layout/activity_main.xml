@@ -39,12 +39,11 @@
             android:progress="0" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/container_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ddd"
-        android:orientation="horizontal">
+        android:background="#ddd">
 
         <Button
             android:id="@+id/button_reload"
@@ -56,8 +55,16 @@
             android:id="@+id/button_position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/button_reload"
             android:text="POSITION" />
-    </LinearLayout>
+
+        <Button
+            android:id="@+id/button_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="BACK" />
+    </RelativeLayout>
 
     <Button
         android:id="@+id/button_draw"

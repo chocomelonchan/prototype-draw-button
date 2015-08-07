@@ -10,6 +10,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DrawView extends View {
 
     private Paint mDrawPaint;
@@ -22,6 +25,7 @@ public class DrawView extends View {
     private MotionEvent mPreviousEvent;
     private PointF mPointerPoint = new PointF(100, 100);
     private PointF mPointerDistance = new PointF(0, 150);
+    private List<Path> mDrawPathes;
 
     public DrawView(Context context) {
         super(context);
@@ -38,6 +42,8 @@ public class DrawView extends View {
     }
 
     private void setup() {
+        mDrawPathes = new ArrayList<>();
+
         mLock = new Object();
 
         mDrawPath = new Path();
@@ -62,8 +68,19 @@ public class DrawView extends View {
     }
 
     public void reset() {
-        setup();
-        invalidate();
+        synchronized (mLock) {
+            setup();
+            invalidate();
+        }
+    }
+
+    public void back() {
+        synchronized (mLock) {
+            if (mDrawPathes.size() != 0) {
+                mDrawPath = mDrawPathes.remove(mDrawPathes.size() - 1);
+                invalidate();
+            }
+        }
     }
 
     public void drawContinuity(boolean continuity) {
@@ -87,12 +104,14 @@ public class DrawView extends View {
 
             if (mDrawContinuity) {
                 if (mDrawTrigger) {
+                    mDrawPathes.add(new Path(mDrawPath));
                     mDrawPath.moveTo(mPointerPoint.x, mPointerPoint.y);
                     mDrawTrigger = false;
                 } else {
                     mDrawPath.lineTo(mPointerPoint.x, mPointerPoint.y);
                 }
             }
+
             invalidate();
             return true;
         }
