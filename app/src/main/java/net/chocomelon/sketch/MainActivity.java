@@ -25,6 +25,8 @@ public class MainActivity extends Activity {
     @InjectView(R.id.seekbar_kankaku_leftright)
     SeekBar mKankakuLeftRightSeekBar;
 
+    private float ONE_PROGRESS_DISTANCE = 70f;
+
     @Override
     protected void onDestroy() {
         ButterKnife.reset(this);
@@ -60,7 +62,7 @@ public class MainActivity extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mDrawView.setPointerDistance(new PointF(
-                        mKankakuLeftRightSeekBar.getMax() / 2 - mKankakuLeftRightSeekBar.getProgress(), progress));
+                        (mKankakuLeftRightSeekBar.getMax() / 2 - mKankakuLeftRightSeekBar.getProgress()) * ONE_PROGRESS_DISTANCE, progress * ONE_PROGRESS_DISTANCE));
             }
 
             @Override
@@ -78,7 +80,7 @@ public class MainActivity extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mDrawView.setPointerDistance(new PointF(
-                        mKankakuLeftRightSeekBar.getMax() / 2 - progress, mKankakuUpDownSeekBar.getProgress()));
+                        (mKankakuLeftRightSeekBar.getMax() / 2 - progress) * ONE_PROGRESS_DISTANCE, mKankakuUpDownSeekBar.getProgress() * ONE_PROGRESS_DISTANCE));
             }
 
             @Override
