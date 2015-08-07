@@ -7,16 +7,5 @@
     <net.chocomelon.sketch.DrawView
         android:id="@+id/view_draw"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/button_draw" />
-
-    <Button
-        android:id="@+id/button_draw"
-        android:layout_width="match_parent"
-        android:layout_height="96dp"
-        android:layout_alignParentBottom="true"
-        android:text="DRAW"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_height="match_parent" />
 </RelativeLayout>

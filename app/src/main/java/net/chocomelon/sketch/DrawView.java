@@ -14,14 +14,11 @@ public class DrawView extends View {
 
     private Paint mDrawPaint;
     private Path mDrawPath;
-    private Object mLock;
-    private boolean mDrawContinuity;
     private boolean mDrawTrigger;
     private Paint mPointerPaint;
     private int POINTER_RADIUS = 10;
-    private MotionEvent mPreviousEvent;
+    private PointF POINTER_DISTANCE_POINT = new PointF(0, 150);
     private PointF mPointerPoint = new PointF(100, 100);
-    private PointF mDownPointerPoint = new PointF(mPointerPoint.x, mPointerPoint.y);
 
     public DrawView(Context context) {
         super(context);
@@ -38,8 +35,6 @@ public class DrawView extends View {
     }
 
     private void setup() {
-        mLock = new Object();
-
         mDrawPath = new Path();
 
         mDrawPaint = new Paint();
@@ -61,42 +56,25 @@ public class DrawView extends View {
         canvas.drawCircle(mPointerPoint.x, mPointerPoint.y, POINTER_RADIUS, mPointerPaint);
     }
 
-    public void drawContinuity(boolean continuity) {
-        synchronized (mLock) {
-            mDrawContinuity = continuity;
-            mDrawTrigger = true;
-        }
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        synchronized (mLock) {
-            if (mPreviousEvent == null || event.getAction() == MotionEvent.ACTION_DOWN) {
-                mPreviousEvent = MotionEvent.obtain(event);
-            }
+        float x = event.getX();
+        float y = event.getY();
+        mPointerPoint = new PointF(event.getX() - POINTER_DISTANCE_POINT.x,
+                event.getY() - POINTER_DISTANCE_POINT.y);
 
-            float degreeX = event.getX() - mPreviousEvent.getX();
-            float degreeY = event.getY() - mPreviousEvent.getY();
-
-            float movedX = mPointerPoint.x + degreeX;
-            float movedY = mPointerPoint.y + degreeY;
-
-            mPointerPoint = new PointF(
-                    movedX < 0 ? 0 : getWidth() < movedX ? getWidth() : movedX,
-                    movedY < 0 ? 0 : getHeight() < movedY ? getHeight() : movedY
-            );
-            mPreviousEvent = MotionEvent.obtain(event);
-
-            if (mDrawContinuity) {
-                if (mDrawTrigger) {
-                    mDrawPath.moveTo(mPointerPoint.x, mPointerPoint.y);
-                    mDrawTrigger = false;
-                } else {
-                    mDrawPath.lineTo(mPointerPoint.x, mPointerPoint.y);
-                }
-            }
-            invalidate();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mDrawPath.moveTo(mPointerPoint.x, mPointerPoint.y);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                mDrawPath.lineTo(mPointerPoint.x, mPointerPoint.y);
+                break;
+            case MotionEvent.ACTION_UP:
+                mDrawPath.lineTo(mPointerPoint.x, mPointerPoint.y);
+                break;
         }
+        invalidate();
         return true;
     }
 }
