@@ -61,6 +61,11 @@ public class DrawView extends View {
         canvas.drawCircle(mPointerPoint.x, mPointerPoint.y, POINTER_RADIUS, mPointerPaint);
     }
 
+    public void reset() {
+        setup();
+        invalidate();
+    }
+
     public void drawContinuity(boolean continuity) {
         synchronized (mLock) {
             mDrawContinuity = continuity;
