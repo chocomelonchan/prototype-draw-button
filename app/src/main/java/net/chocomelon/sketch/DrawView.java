@@ -21,7 +21,7 @@ public class DrawView extends View {
     private int POINTER_RADIUS = 10;
     private MotionEvent mPreviousEvent;
     private PointF mPointerPoint = new PointF(100, 100);
-    private PointF POINTER_DISTANCE_POINT = new PointF(0, 150);
+    private PointF mPointerDistance = new PointF(0, 150);
 
     public DrawView(Context context) {
         super(context);
@@ -68,11 +68,17 @@ public class DrawView extends View {
         }
     }
 
+    public void setPointerDistance(PointF pointerDistance) {
+        synchronized (mLock) {
+            mPointerDistance = pointerDistance;
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         synchronized (mLock) {
-            mPointerPoint = new PointF(event.getX() - POINTER_DISTANCE_POINT.x,
-                    event.getY() - POINTER_DISTANCE_POINT.y);
+            mPointerPoint = new PointF(event.getX() - mPointerDistance.x,
+                    event.getY() - mPointerDistance.y);
 
             if (mDrawContinuity) {
                 if (mDrawTrigger) {
