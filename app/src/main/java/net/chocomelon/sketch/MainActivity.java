@@ -13,6 +13,7 @@ import android.widget.SeekBar;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 public class MainActivity extends Activity {
 
@@ -31,11 +32,15 @@ public class MainActivity extends Activity {
     @InjectView(R.id.container_seekbar)
     View mSeekbarContainer;
 
+    @InjectView(R.id.container_colors)
+    View mColorsContainer;
+
     private float ONE_PROGRESS_DISTANCE = 70f;
 
     @Override
     protected void onDestroy() {
         ButterKnife.reset(this);
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -44,6 +49,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+        EventBus.getDefault().register(this);
 
         mDrawButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -97,6 +103,10 @@ public class MainActivity extends Activity {
         });
     }
 
+    public void onEvent(Events.ColorChangeEvent event) {
+        mDrawView.setColor(event.color);
+    }
+
     @OnClick(R.id.button_reload)
     public void onReloadButtonClick() {
         mDrawView.reset();
@@ -146,6 +156,48 @@ public class MainActivity extends Activity {
                 }
             });
             mSeekbarContainer.startAnimation(anim);
+        }
+    }
+
+    @OnClick(R.id.button_colors)
+    public void onColorsButtonClick() {
+        int height = getResources().getDimensionPixelSize(R.dimen.buttons_container_height);
+        if (mColorsContainer.getVisibility() == View.VISIBLE) {
+            TranslateAnimation anim = new TranslateAnimation(0, 0, 0, -height);
+            anim.setDuration(300);
+            anim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mColorsContainer.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            mColorsContainer.startAnimation(anim);
+        } else {
+            TranslateAnimation anim = new TranslateAnimation(0, 0, -height, 0);
+            anim.setDuration(300);
+            anim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    mColorsContainer.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            mColorsContainer.startAnimation(anim);
         }
     }
 }

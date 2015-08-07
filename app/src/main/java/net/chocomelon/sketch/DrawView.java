@@ -25,7 +25,7 @@ public class DrawView extends View {
     private MotionEvent mPreviousEvent;
     private PointF mPointerPoint = new PointF(100, 100);
     private PointF mPointerDistance = new PointF(0, 150);
-    private List<Path> mDrawPathes;
+    private List<History> mDrawHistories;
 
     public DrawView(Context context) {
         super(context);
@@ -42,7 +42,7 @@ public class DrawView extends View {
     }
 
     private void setup() {
-        mDrawPathes = new ArrayList<>();
+        mDrawHistories = new ArrayList<>();
 
         mLock = new Object();
 
@@ -63,8 +63,19 @@ public class DrawView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        for (History history : mDrawHistories) {
+            canvas.drawPath(history.path, history.paint);
+        }
         canvas.drawPath(mDrawPath, mDrawPaint);
         canvas.drawCircle(mPointerPoint.x, mPointerPoint.y, POINTER_RADIUS, mPointerPaint);
+    }
+
+    public void setColor(int color) {
+        // 暫定対応
+        mDrawHistories.add(new History(mDrawPath, mDrawPaint));
+        mDrawPath = new Path();
+
+        mDrawPaint.setColor(color);
     }
 
     public void reset() {
@@ -76,8 +87,10 @@ public class DrawView extends View {
 
     public void back() {
         synchronized (mLock) {
-            if (mDrawPathes.size() != 0) {
-                mDrawPath = mDrawPathes.remove(mDrawPathes.size() - 1);
+            if (mDrawHistories.size() != 0) {
+                History history = mDrawHistories.remove(mDrawHistories.size() - 1);
+                mDrawPath = history.path;
+                mDrawPaint = history.paint;
                 invalidate();
             }
         }
@@ -104,7 +117,8 @@ public class DrawView extends View {
 
             if (mDrawContinuity) {
                 if (mDrawTrigger) {
-                    mDrawPathes.add(new Path(mDrawPath));
+                    mDrawHistories.add(new History(mDrawPath, mDrawPaint));
+                    mDrawPath = new Path();
                     mDrawPath.moveTo(mPointerPoint.x, mPointerPoint.y);
                     mDrawTrigger = false;
                 } else {
