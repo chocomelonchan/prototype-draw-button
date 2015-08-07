@@ -21,7 +21,7 @@ public class DrawView extends View {
     private int POINTER_RADIUS = 10;
     private MotionEvent mPreviousEvent;
     private PointF mPointerPoint = new PointF(100, 100);
-    private PointF mDownPointerPoint = new PointF(mPointerPoint.x, mPointerPoint.y);
+    private PointF POINTER_DISTANCE_POINT = new PointF(0, 150);
 
     public DrawView(Context context) {
         super(context);
@@ -71,21 +71,8 @@ public class DrawView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         synchronized (mLock) {
-            if (mPreviousEvent == null || event.getAction() == MotionEvent.ACTION_DOWN) {
-                mPreviousEvent = MotionEvent.obtain(event);
-            }
-
-            float degreeX = event.getX() - mPreviousEvent.getX();
-            float degreeY = event.getY() - mPreviousEvent.getY();
-
-            float movedX = mPointerPoint.x + degreeX;
-            float movedY = mPointerPoint.y + degreeY;
-
-            mPointerPoint = new PointF(
-                    movedX < 0 ? 0 : getWidth() < movedX ? getWidth() : movedX,
-                    movedY < 0 ? 0 : getHeight() < movedY ? getHeight() : movedY
-            );
-            mPreviousEvent = MotionEvent.obtain(event);
+            mPointerPoint = new PointF(event.getX() - POINTER_DISTANCE_POINT.x,
+                    event.getY() - POINTER_DISTANCE_POINT.y);
 
             if (mDrawContinuity) {
                 if (mDrawTrigger) {
@@ -96,7 +83,7 @@ public class DrawView extends View {
                 }
             }
             invalidate();
+            return true;
         }
-        return true;
     }
 }
