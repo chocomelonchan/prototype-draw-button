@@ -6,29 +6,17 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-
 public class MainActivity extends Activity {
-
-    @InjectView(R.id.view_draw)
-    DrawView mDrawView;
-
-    @InjectView(R.id.button_draw)
-    Button mDrawButton;
-
-    @Override
-    protected void onDestroy() {
-        ButterKnife.reset(this);
-        super.onDestroy();
-    }
+    private DrawView mDrawView;
+    private Button mDrawButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.inject(this);
+
+        mDrawButton = findViewById(R.id.button_draw);
+        mDrawView = findViewById(R.id.view_draw);
 
         mDrawButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -44,10 +32,10 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
-    }
-
-    @OnClick(R.id.button_draw)
-    public void onDrawButtonClick() {
-        mDrawView.drawContinuity(true);
+        mDrawButton.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mDrawView.drawContinuity(true);
+            }
+        });
     }
 }
